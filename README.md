@@ -22,7 +22,7 @@ To run this application locally, follow these steps:
 
 ```nodemon app.js```
 
-Open your browser and navigate to http://localhost:3000 to view the application.
+Open your browser and navigate to http://localhost:3001 to view the application.
 
 ### Technologies Used
 - [Axios](https://axios-http.com/) - Promise-based HTTP client for the browser and Node.js
