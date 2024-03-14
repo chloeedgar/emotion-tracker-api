@@ -2,11 +2,11 @@ const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
 const dotenv = require('dotenv').config({ path: './config.env' });
-const userRouter = require('./routes/userRouter');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const snapshotRouter = require('./routes/snapshotRouter');
+const userRouter = require('./routes/userRouter');
 
 const app = express();
 
@@ -25,7 +25,7 @@ app.use(session({
     resave: false,  
     saveUninitialized: true, // true or false?
     cookie: {
-        secure: false, // Set to true if using HTTPS
+        secure: false, // not using HTTPS
         httpOnly: true,  // best practise=true as prevents cross-site scripting (XSS) attacks
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }

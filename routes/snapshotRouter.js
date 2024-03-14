@@ -1,22 +1,30 @@
 const express = require('express');
-const { body } = require('express-validator');
 const snapshotController = require('../controllers/snapshotController');
-// const { isAuthenticated, isAuthorized } = require('../middleware.js');
-// const { verifyToken } = require('../middleware.js'); 
 const snapshotRouter = express.Router();
-const { isAuth } = require('./../middleware/auth');
+const requireAuth = require('../middleware/auth'); 
 
-
-// add auth back in after testing*******************
+// Route for getting all contextual triggers
 snapshotRouter.get('/contextualTriggers', snapshotController.getAllContextualTriggers);
- snapshotRouter.post('/', isAuth, snapshotController.createSnapshot);
- snapshotRouter.get('/users/:userId', snapshotController.getAllSnapshotsByUserId); //add is auth back
- snapshotRouter.get('/:snapshotId', snapshotController.getSnapshotById);
- snapshotRouter.patch('/:snapshotId', snapshotController.updateSnapshotById);
- snapshotRouter.delete('/:snapshotId', snapshotController.deleteSnapshotById);
- snapshotRouter.get('/:snapshotId/contextualTriggers', snapshotController.getContextualTriggersBySnapshotId);
 
-//snapshotRouter.post('/', isAuth,snapshotController.createSnapshot);
+// Route for creating a snapshot 
+snapshotRouter.post('/', requireAuth, snapshotController.createSnapshot);
+
+// Route for getting all snapshots created by user
+snapshotRouter.get('/users/:userId', requireAuth, snapshotController.getAllSnapshotsByUserId);
+
+// Route for getting a snapshot by snapshotId
+snapshotRouter.get('/:snapshotId', requireAuth, snapshotController.getSnapshotById);
+
+// Route for updating a snapshot by snapshotId
+snapshotRouter.patch('/:snapshotId', requireAuth, snapshotController.updateSnapshotById);
+
+// Route for deleting a snapshot by snapshotId
+snapshotRouter.delete('/:snapshotId', requireAuth, snapshotController.deleteSnapshotById);
+
+// Route for getting the contextual triggers associated with a snapshot using the snapshotId
+// did not end up needing in web app
+snapshotRouter.get('/:snapshotId/contextualTriggers', requireAuth, snapshotController.getContextualTriggersBySnapshotId);
+
 
 
 module.exports = snapshotRouter;
