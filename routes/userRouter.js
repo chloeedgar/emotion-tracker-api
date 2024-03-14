@@ -25,6 +25,7 @@ userRouter.post('/signup', [
         .trim()
         .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
         // .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/).withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@#$%^&+=)')
+        // requires a change in the hashing of password
 ], userController.signupPost);
 
 // Route for user sign in

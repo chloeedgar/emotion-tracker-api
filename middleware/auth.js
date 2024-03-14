@@ -2,7 +2,7 @@
 const requireAuth = (req, res, next) => {
     console.log('Checking authentication...');
     console.log('Session object:', req.session);
-    const userId = req.headers.authorization; // Assuming the user ID is sent in the Authorization header
+    const userId = req.headers.authorization; 
 
     console.log('userId:', userId);
 

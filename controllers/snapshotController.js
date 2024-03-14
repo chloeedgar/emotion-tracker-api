@@ -2,7 +2,7 @@ const conn = require('../utils/dbConn');
 const { validationResult } = require('express-validator');
 
 exports.createSnapshot = (req, res) => {  
-    // Validate incoming request body
+    // Validate incoming request body  -- not yet implemented
     // const errors = validationResult(req);
     // if (!errors.isEmpty()) {
     //     return res.status(400).json({ errors: errors.array() });
