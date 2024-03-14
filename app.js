@@ -23,11 +23,19 @@ app.use(express.json()); // Middleware to parse JSON-formatted request bodies
 app.use(session({
     secret: 'secret-key', 
     resave: false,  
-    saveUninitialized: true // true or false?
+    saveUninitialized: true, // true or false?
+    cookie: {
+        secure: false, // Set to true if using HTTPS
+        httpOnly: true,  // best practise=true as prevents cross-site scripting (XSS) attacks
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
 }));
 
 // Enable CORS
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
 
 //Routes
 app.use('/api/users', userRouter); //User routes

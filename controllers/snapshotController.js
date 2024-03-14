@@ -97,6 +97,9 @@ exports.createSnapshot = (req, res) => {  //this one - performs gd
         notes
     } = req.body;
 
+    console.log('Request body received: ' + JSON.stringify(req.body));
+
+
     // Prepare SQL query to insert snapshot into the database
     const query = `
         INSERT INTO emotion_snapshot 
@@ -161,6 +164,8 @@ exports.createSnapshot = (req, res) => {  //this one - performs gd
         }
     });
 };
+
+
 exports.getAllContextualTriggers = (req, res) => {
     // Query to retrieve all contextual triggers from the database
     const query = 'SELECT * FROM contextual_trigger';
@@ -351,76 +356,76 @@ exports.createSnapshot_trigger_id_doesnt_work = (req, res) => {
     });
 };
 
+// exports.getAllSnapshotsByUserId = (req, res) => {
+//     const userId = req.params.userId;
+//     const page = parseInt(req.query.page) || 1; // Default to page 1 if page query parameter is not provided
+//     const limit = parseInt(req.query.limit) || 10; // Default to limit 10 if limit query parameter is not provided
+
+//     // Calculate the offset based on the current page and limit
+//     const offset = (page - 1) * limit;
+
+//     // Construct the SQL query to fetch snapshots and their contextual triggers for the specified user with pagination
+//     const query = `
+//         SELECT 
+//             es.snapshot_id,
+//             es.user_id,
+//             es.enjoyment_level,
+//             es.sadness_level,
+//             es.anger_level,
+//             es.contempt_level,
+//             es.disgust_level,
+//             es.fear_level,
+//             es.surprise_level,
+//             es.timestamp,
+//             ct.trigger_name AS contextualTrigger,
+//             es.notes
+//         FROM 
+//             emotion_snapshot es
+//         LEFT JOIN 
+//             emotion_snapshot_trigger est ON es.snapshot_id = est.snapshot_id
+//         LEFT JOIN 
+//             contextual_trigger ct ON est.trigger_id = ct.trigger_id
+//         WHERE 
+//             es.user_id = ?
+//         LIMIT ?, ?;  -- Limit the number of results returned based on the pagination parameters
+//     `;
+//     conn.query(query, [userId, offset, limit], (err, results) => {
+//         if (err) {
+//             console.error('Error fetching snapshots:', err);
+//             res.status(500).json({ error: 'Failed to fetch snapshots' });
+//         } else {
+//             // Group the results by snapshot_id and construct an array of contextual triggers for each snapshot
+//             const snapshotsMap = new Map();
+//             results.forEach(snapshot => {
+//                 if (!snapshotsMap.has(snapshot.snapshot_id)) {
+//                     snapshotsMap.set(snapshot.snapshot_id, {
+//                         snapshot_id: snapshot.snapshot_id,
+//                         user_id: snapshot.user_id,
+//                         enjoyment_level: snapshot.enjoyment_level,
+//                         sadness_level: snapshot.sadness_level,
+//                         anger_level: snapshot.anger_level,
+//                         contempt_level: snapshot.contempt_level,
+//                         disgust_level: snapshot.disgust_level,
+//                         fear_level: snapshot.fear_level,
+//                         surprise_level: snapshot.surprise_level,
+//                         timestamp: snapshot.timestamp,
+//                         contextualTriggers: [],
+//                         notes: snapshot.notes
+//                     });
+//                 }
+//                 if (snapshot.contextualTrigger) {
+//                     snapshotsMap.get(snapshot.snapshot_id).contextualTriggers.push(snapshot.contextualTrigger);
+//                 }
+//             });
+
+//             // Convert the Map values to an array and send the response
+//             const snapshots = Array.from(snapshotsMap.values());
+//             res.json(snapshots);
+//         }
+//     });
+// };
+
 exports.getAllSnapshotsByUserId = (req, res) => {
-    const userId = req.params.userId;
-    const page = parseInt(req.query.page) || 1; // Default to page 1 if page query parameter is not provided
-    const limit = parseInt(req.query.limit) || 10; // Default to limit 10 if limit query parameter is not provided
-
-    // Calculate the offset based on the current page and limit
-    const offset = (page - 1) * limit;
-
-    // Construct the SQL query to fetch snapshots and their contextual triggers for the specified user with pagination
-    const query = `
-        SELECT 
-            es.snapshot_id,
-            es.user_id,
-            es.enjoyment_level,
-            es.sadness_level,
-            es.anger_level,
-            es.contempt_level,
-            es.disgust_level,
-            es.fear_level,
-            es.surprise_level,
-            es.timestamp,
-            ct.trigger_name AS contextualTrigger,
-            es.notes
-        FROM 
-            emotion_snapshot es
-        LEFT JOIN 
-            emotion_snapshot_trigger est ON es.snapshot_id = est.snapshot_id
-        LEFT JOIN 
-            contextual_trigger ct ON est.trigger_id = ct.trigger_id
-        WHERE 
-            es.user_id = ?
-        LIMIT ?, ?;  -- Limit the number of results returned based on the pagination parameters
-    `;
-    conn.query(query, [userId, offset, limit], (err, results) => {
-        if (err) {
-            console.error('Error fetching snapshots:', err);
-            res.status(500).json({ error: 'Failed to fetch snapshots' });
-        } else {
-            // Group the results by snapshot_id and construct an array of contextual triggers for each snapshot
-            const snapshotsMap = new Map();
-            results.forEach(snapshot => {
-                if (!snapshotsMap.has(snapshot.snapshot_id)) {
-                    snapshotsMap.set(snapshot.snapshot_id, {
-                        snapshot_id: snapshot.snapshot_id,
-                        user_id: snapshot.user_id,
-                        enjoyment_level: snapshot.enjoyment_level,
-                        sadness_level: snapshot.sadness_level,
-                        anger_level: snapshot.anger_level,
-                        contempt_level: snapshot.contempt_level,
-                        disgust_level: snapshot.disgust_level,
-                        fear_level: snapshot.fear_level,
-                        surprise_level: snapshot.surprise_level,
-                        timestamp: snapshot.timestamp,
-                        contextualTriggers: [],
-                        notes: snapshot.notes
-                    });
-                }
-                if (snapshot.contextualTrigger) {
-                    snapshotsMap.get(snapshot.snapshot_id).contextualTriggers.push(snapshot.contextualTrigger);
-                }
-            });
-
-            // Convert the Map values to an array and send the response
-            const snapshots = Array.from(snapshotsMap.values());
-            res.json(snapshots);
-        }
-    });
-};
-
-exports.getAllSnapshotsByUserId_nopage = (req, res) => {
     const userId = req.params.userId;
 
     // Construct the SQL query to fetch snapshots and their contextual triggers for the specified user
@@ -622,8 +627,6 @@ exports.getContextualTriggersBySnapshotId = (req, res) => {
         });
     });
 };
-
-
 
 exports.deleteSnapshotById = (req, res) => {
     const snapshotId = req.params.snapshotId;

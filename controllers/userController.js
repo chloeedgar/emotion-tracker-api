@@ -1,6 +1,12 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const conn = require('../utils/dbConn');
 const { validationResult } = require('express-validator');
+
+// Function to generate token
+const generateToken = (userId) => {
+    return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '24h' });
+};
 
 // Function to handle user sign up
 exports.signupPost = (req, res) => {
@@ -47,10 +53,11 @@ exports.signupPost = (req, res) => {
                             message: 'Internal Server Error'
                         });
                     } else {
+                        //const token = generateToken(result.insertId); // Generate token
                         return res.status(200).json({
                             status: 'success',
                             message: 'User created successfully',
-                            result: result,
+                            //token,
                             userId: result.insertId
                         });
                     }
@@ -95,18 +102,31 @@ exports.signinPost = (req, res) => {
                     } else {
                         if (passwordMatch) {
                             // User authenticated successfully
-                            console.log('User: ' + username + ' logged in successfully');          
+                            console.log('User: ' + username + ' logged in successfully'); 
 
-                            // If the user is authenticated successfully, create a session
-                            req.session.userId = rows[0].user_id; 
-                            req.session.username = username;
-                            console.log('Session created for ' + username);
+                                                    // User authenticated successfully
+                        const token = generateToken(rows[0].user_id); // Generate token
+                        console.log('token: ' + token); //debug
+                        return res.status(200).json({
+                            status: 'success',
+                            message: 'User logged in successfully',
+                            token, // Send token to client
+                            userId: rows[0].user_id
+                        });         
 
-                            return res.status(200).json({
-                                status: 'success',
-                                message: 'User logged in successfully',
-                                userId: rows[0].user_id
-                            });
+                            // // If the user is authenticated successfully, create a session
+                            // req.session.userId = rows[0].user_id; 
+                            // req.session.username = username;
+                            // //req.session.role = role;
+                            // console.log('Session created for ' + rows[0].user_id + ': ' +username);
+
+
+
+                            // return res.status(200).json({
+                            //     status: 'success',
+                            //     message: 'User logged in successfully',
+                            //     userId: rows[0].user_id
+                            // });
                         } else {
                             return res.status(401).json({
                                 status: 'failure',
@@ -120,7 +140,7 @@ exports.signinPost = (req, res) => {
     });
 };
 
-// Function to handle user sign out
+// Function to handle user sign out   //maybe remove this
 exports.signout = (req, res) => {
     // Destroy the user's session
     req.session.destroy(err => {
